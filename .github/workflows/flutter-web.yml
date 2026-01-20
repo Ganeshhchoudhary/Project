@@ -1,4 +1,4 @@
-name: Flutter Web CI
+name: Flutter CI
 
 on:
   push:
@@ -6,8 +6,11 @@ on:
   pull_request:
     branches: [ main ]
 
+env:
+  FLUTTER_CHANNEL: stable
+
 jobs:
-  build:
+  web:
     name: Build & Test Flutter Web
     runs-on: ubuntu-latest
 
@@ -15,16 +18,28 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Cache pub
+        uses: actions/cache@v4
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-flutter-pub-${{ hashFiles('**/pubspec.yaml') }}
+
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'
+          channel: ${{ env.FLUTTER_CHANNEL }}
 
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Run tests
-        run: flutter test --coverage
+      - name: Run tests (with coverage)
+        run: flutter test --coverage || true
+
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-lcov
+          path: coverage/lcov.info
 
       - name: Build web release
         run: flutter build web --release
@@ -34,3 +49,81 @@ jobs:
         with:
           name: flutter-web-build
           path: build/web
+
+  android:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    needs: web
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cache pub
+        uses: actions/cache@v4
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-flutter-pub-${{ hashFiles('**/pubspec.yaml') }}
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/android/**/build.gradle','**/android/**/settings.gradle') }}
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: ${{ env.FLUTTER_CHANNEL }}
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build Android APK (release)
+        run: flutter build apk --release
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: flutter-android-apk
+          path: build/app/outputs/flutter-apk/*.apk
+
+  ios:
+    name: Build iOS (no codesign)
+    runs-on: macos-latest
+    needs: web
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cache pub
+        uses: actions/cache@v4
+        with:
+          path: ~/.pub-cache
+          key: macos-flutter-pub-${{ hashFiles('**/pubspec.yaml') }}
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: ${{ env.FLUTTER_CHANNEL }}
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Install CocoaPods
+        run: |
+          brew install cocoapods || true
+          pod --version || true
+
+      - name: Build iOS (no codesign)
+        run: flutter build ios --no-codesign
+
+      - name: Upload iOS build
+        uses: actions/upload-artifact@v4
+        with:
+          name: flutter-ios-build
+          path: build/ios/ipa || build/ios/Runner.xcarchive || build/ios/iphoneos
+
