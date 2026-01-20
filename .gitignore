@@ -1,0 +1,109 @@
+# Flutter / Dart
+.dart_tool/
+.packages
+.flutter-plugins
+.flutter-plugins-dependencies
+.build/
+.idea/
+.vscode/
+pubspec.lock
+build/
+
+# Android/Gradle
+**/android/**/local.properties
+**/gradle/**
+
+# iOS
+**/ios/Pods/
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+
+# Python / model
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+env/
+venv/
+*.h5
+*.tflite
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.log
+
+# OneDrive temp files
+~$*
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# Flutter
+.metadata
+.packages
+.pub-cache/
+.pub/
+build/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Android
+*.apk
+*.ap_
+*.aab
+*.dex
+*.class
+local.properties
+*.iml
+.gradle/
+
+# iOS
+*.mode1v3
+*.mode2v3
+*.moved-aside
+*.pbxuser
+*.perspectivev3
+**/*sync/
+*.xcuserstate
+*.xcworkspace
+ios/Pods/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Models (large files)
+models/*.h5
+models/*.pb
+models/*.ckpt
+!models/*.tflite
+
+# Data files
+*.csv
+*.json
+data/
+*.db
+*.sqlite
+
+# Environment
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db
+
