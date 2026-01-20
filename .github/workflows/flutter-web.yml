@@ -22,7 +22,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.pub-cache
-          key: ${{ runner.os }}-flutter-pub-${{ hashFiles('**/pubspec.yaml') }}
+          key: ${{ runner.os }}-flutter-pub-${{ hashFiles('mobile_app/pubspec.yaml') }}
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -31,9 +31,11 @@ jobs:
 
       - name: Install dependencies
         run: flutter pub get
+        working-directory: ./mobile_app
 
       - name: Run tests (with coverage)
         run: flutter test --coverage || true
+        working-directory: ./mobile_app
 
       - name: Upload coverage artifact
         uses: actions/upload-artifact@v4
@@ -43,6 +45,7 @@ jobs:
 
       - name: Build web release
         run: flutter build web --release
+        working-directory: ./mobile_app
 
       - name: Upload web build
         uses: actions/upload-artifact@v4
@@ -63,7 +66,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.pub-cache
-          key: ${{ runner.os }}-flutter-pub-${{ hashFiles('**/pubspec.yaml') }}
+          key: ${{ runner.os }}-flutter-pub-${{ hashFiles('mobile_app/pubspec.yaml') }}
 
       - name: Cache Gradle
         uses: actions/cache@v4
@@ -80,9 +83,11 @@ jobs:
 
       - name: Install dependencies
         run: flutter pub get
+        working-directory: ./mobile_app
 
       - name: Build Android APK (release)
         run: flutter build apk --release
+        working-directory: ./mobile_app
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
@@ -103,7 +108,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.pub-cache
-          key: macos-flutter-pub-${{ hashFiles('**/pubspec.yaml') }}
+          key: macos-flutter-pub-${{ hashFiles('mobile_app/pubspec.yaml') }}
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -112,6 +117,7 @@ jobs:
 
       - name: Install dependencies
         run: flutter pub get
+        working-directory: ./mobile_app
 
       - name: Install CocoaPods
         run: |
@@ -120,6 +126,7 @@ jobs:
 
       - name: Build iOS (no codesign)
         run: flutter build ios --no-codesign
+        working-directory: ./mobile_app
 
       - name: Upload iOS build
         uses: actions/upload-artifact@v4
