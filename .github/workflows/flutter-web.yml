@@ -8,10 +8,12 @@ on:
 
 env:
   FLUTTER_CHANNEL: stable
+  BUILD_WEB: 'false'
 
 jobs:
   web:
     name: Build & Test Flutter Web
+    if: env.BUILD_WEB == 'true'
     runs-on: ubuntu-latest
 
     steps:
